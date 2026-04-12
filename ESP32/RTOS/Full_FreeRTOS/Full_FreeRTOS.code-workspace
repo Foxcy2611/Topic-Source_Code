@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"name": "Full_FreeRTOS",
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"iostream": "cpp",
+			"ostream": "cpp",
+			"led_7.h": "c",
+			"led_buz.h": "c",
+			"algorithm": "cpp",
+			"string": "cpp"
+		}
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"path": "../../Queue_RTOS"
+		},
+		{
+			"name": "Task_1",
+			"path": "../../Task_1"
+		},
+		{
+			"name": "Mutex",
+			"path": "../../Mutex"
+		},
+		{
+			"name": "Semaphore",
+			"path": ".."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"iostream": "cpp",
+			"ostream": "cpp",
+			"led_7.h": "c",
+			"led_buz.h": "c",
+			"algorithm": "cpp",
+			"string": "cpp"
+		}
+	}
+}
