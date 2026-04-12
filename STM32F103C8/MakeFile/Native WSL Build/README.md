@@ -1,116 +1,117 @@
-## Firmware project template for STM32F103
+# 🚀 Template Dự Án Firmware cho STM32F103 (Native WSL)
 
-## Overview
-* This project is a completely separate IDE from the typical IDEs used.
-* By designing, building a template system, and classification on VSC, we can create an IDE for the STM32F103C8.
-* No Keil C or STM32CubeIDE are needed; we can completely build, debug, and flash code.
+![MCU](https://img.shields.io/badge/MCU-STM32F103C8-brightgreen.svg)
+![Build](https://img.shields.io/badge/Build-Makefile-orange.svg)
+![OS](https://img.shields.io/badge/Environment-WSL%20Ubuntu-blue.svg)
 
-## Project's Programming Environment
-In this project, we developed using the following environments, separate from typical IDEs.
-* OS: Window 11
-* Visual Studio Code
-* WSL (Ubuntu)
-* GNU Arm Embedded Toolchain
-* OpenOCD / ST-Link for debugging
+## 🌟 Tổng quan
+- Dự án này cung cấp một môi trường phát triển độc lập, tách biệt hoàn toàn khỏi các IDE truyền thống.
+- Bằng cách thiết lập hệ thống template và tổ chức cấu trúc thư mục trên Visual Studio Code, chúng ta tạo ra một quy trình phát triển (viết code, biên dịch, gỡ lỗi và nạp) mạnh mẽ dành riêng cho vi điều khiển STM32F103C8.
+- **Không cần Keil C hay STM32CubeIDE.** Mọi thao tác Build, Debug và Flash code đều được thực hiện thông qua command line.
 
-## Project Diagram
+## 🛠 Môi trường Phát triển
+Hệ thống được thiết kế để chạy trên môi trường sau:
+- **OS:** Windows 11
+- **Editor:** Visual Studio Code (VS Code)
+- **Core Environment:** WSL (Ubuntu)
+- **Compiler:** GNU Arm Embedded Toolchain
+- **Debug/Flash:** OpenOCD / ST-Link
+
+---
+
+## 📂 Cấu trúc Dự án
 
 ```text
 Native WSL Build/
 │
-├── Makefile                  # Project Manager
+├── Makefile                  # Trình quản lý biên dịch toàn bộ dự án
 │
-├── app/                      # [Project layer and code libraries]
-│   ├── inc/                  # - main.h + custom-written .h libraries
-│   └── src/                  # - main.c + custom-written .c libraries
+├── app/                      # [Lớp Ứng dụng & Thư viện tự viết]
+│   ├── inc/                  # - main.h + các thư viện .h tự cấu hình
+│   └── src/                  # - main.c + các thư viện .c tự viết
 │
-├── drivers/                  # [System control layer]
-│   ├── inc/                  # - stm32f10x_conf.h (Peripheral configuration).
-│   │                         # - stm32f10x_it.h (Interrupt declaration).
-│   └── src/                  # - stm32f10x_it.c (Where interrupt handling code - ISR is written).
-│                             # - system_stm32f10x.c (Clock configuration for the chip).
-│                             # - Note: This is the "framework" that helps the chip and SPL code understand each other..
+├── drivers/                  # [Lớp Điều khiển Hệ thống]
+│   ├── inc/                  # - stm32f10x_conf.h (Cấu hình ngoại vi).
+│   │                         # - stm32f10x_it.h (Khai báo ngắt).
+│   └── src/                  # - stm32f10x_it.c (Nơi viết các trình phục vụ ngắt - ISR).
+│                             # - system_stm32f10x.c (Cấu hình Clock cho chip).
+│                             # - Note: Đây là "bộ khung" giúp Chip và thư viện SPL hiểu nhau.
 │
-├── lib/                      # [Original Library Floor - VENDOR]
-│   ├── cmsis/                # - ARM Core Library (core_cm3.h, stm32f10x.h).
-│   └── spl/                  # - Standard external library of the manufacturer (GPIO, RCC, UART...).
+├── lib/                      # [Lớp Thư viện Gốc - VENDOR]
+│   ├── cmsis/                # - Thư viện lõi ARM (core_cm3.h, stm32f10x.h).
+│   └── spl/                  # - Thư viện ngoại vi chuẩn của hãng (GPIO, RCC, UART...).
 │       ├── inc/ 
 │       └── src/ 
-│                             # - Note: ReadOnly
+│                             # - Note: Chỉ Đọc (ReadOnly), không sửa đổi code trong này.
 │
-├── system/                   # [Startup floor]
-│   ├── startup.s             # - File Assembly.
-│   └── stm32_f103c8.ld       # - Linker Script.
-│   └── STM32F103.svd         # - File for checking registers during debugging.
+├── system/                   # [Lớp Khởi động & Cấu hình bộ nhớ]
+│   ├── startup.s             # - File Assembly khởi động (Vector Table).
+│   ├── stm32_f103c8.ld       # - Linker Script (Phân bổ RAM/ROM).
+│   └── STM32F103.svd         # - File SVD hỗ trợ xem thanh ghi (Registers) khi Debug.
 │
-└── build/                    # [OUTPUT] - The .hex and .bin files are located here.
+└── build/                    # [OUTPUT] - Thư mục chứa các file đầu ra như .hex, .bin, .elf.
 ```
 
-## Setup for Work
+---
 
-### 1. Install WSL on Window
+## ⚙️ Hướng dẫn Cài đặt Môi trường
 
-``` bash
+### 1. Cài đặt WSL trên Windows
+Mở **PowerShell** (Run as Administrator) và chạy lệnh:
+```bash
 wsl --install
 wsl --install -d Ubuntu
 ```
 
-### 2. Setup WSL on VSC
-* Install extension WSL
-* Ctrl + Shift + P
-* Reopen on WSL
+### 2. Thiết lập VS Code với WSL
+- Cài đặt Extension **WSL** (của Microsoft) trong VS Code.
+- Nhấn tổ hợp phím `Ctrl + Shift + P`, gõ và chọn **"WSL: Reopen Folder in WSL"** để làm việc trực tiếp trên nền Ubuntu.
 
-### 3. Install Toolchain 
-This toolkit includes a C/C++ compiler for ARM bare-metal, tools for inspecting .bin and .elf files, and debugging tools.
-
-``` bash
+### 3. Cài đặt Toolchain (Trên Terminal của WSL)
+Bộ công cụ này bao gồm trình biên dịch C/C++ cho chip ARM (bare-metal), các công cụ kiểm tra file `.bin`/`.elf` và trình gỡ lỗi (gdb).
+```bash
+sudo apt update
 sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi gdb-multiarch make -y
 ```
 
-### 4. Setting up a USB (ST-Link) connection over a virtual network (USB/IP)
-Open PowerShell (Run as Administrator), install usbipd
+### 4. Chia sẻ ST-Link từ Windows vào WSL (USB/IP)
 
-``` bash
+Do WSL là một máy ảo, nó không tự động nhận các thiết bị cắm vào cổng USB của Windows. Ta cần dùng công cụ ép Windows chuyển tín hiệu USB vào WSL.
+
+**A. Trên Windows PowerShell (Run as Administrator):**
+Cài đặt công cụ `usbipd`:
+```bash
 winget install --interactive --exact dorssel.usbipd-win
 ```
-(Restart your computer if this is the first time installing.)
+*(Khởi động lại máy tính nếu đây là lần đầu bạn cài đặt).*
 
-Setup on Windows
-* Install the USB control toolkit.
-  
-``` bash
+**B. Trên Terminal của WSL (Ubuntu):**
+Cài đặt các gói hỗ trợ quản lý USB và công cụ nạp/gỡ lỗi (ST-Link, OpenOCD):
+```bash
 sudo apt update
-sudo apt install usbutils -y
-```
-
-* Install drivers and overclock using the usbipd command.
-  
-``` bash
-sudo apt install linux-tools-generic hwdata -y
+sudo apt install usbutils linux-tools-generic hwdata libusb-1.0-0-dev -y
 sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20
-sudo apt install libusb-1.0-0-dev -y
-```
-  
-* Install the Loading and Debugging Toolkit (ST-Link).
-  
-``` bash
 sudo apt install stlink-tools openocd -y
 ```
 
-* Grant permission for ST-Link to be used at WSL.
-Once you successfully grant permission, standard IDEs (Keil C, etc.) will no longer be able to detect the St-Link connection signal.
-
-``` bash
+**C. Gắn mạch nạp ST-Link vào WSL:**
+Quay lại **Windows PowerShell (Admin)**, chạy lệnh sau để tìm Bus ID của ST-Link:
+```bash
 usbipd list
+```
+Ghi nhớ `<busid>` của thiết bị "ST-Link Debug" (ví dụ: `2-1`) và tiến hành bind/attach:
+```bash
 usbipd bind --busid <busid>
 usbipd attach --wsl --busid <busid>
 ```
-
-Check by
-
-``` bash
+*⚠️ Lưu ý quan trọng: Sau khi chạy lệnh này, các IDE trên Windows (như Keil C) sẽ không tìm thấy ST-Link nữa do nó đã bị "chiếm dụng" bởi WSL.* **D. Kiểm tra kết nối:**
+Trở lại **Terminal của WSL**, gõ lệnh sau để đảm bảo WSL đã nhận được chip:
+```bash
 st-info --probe
 ```
+*(Nếu terminal in ra thông số chip STM32F103, chúc mừng bạn đã thiết lập thành công!)*
 
-## The rest has been edited; see the project for more details.
+> 💡 **Mẹo nhỏ:** Để trả lại ST-Link về cho Windows (nếu muốn quay lại dùng Keil C), mở Windows PowerShell và chạy lệnh: `usbipd detach --busid <busid>`.
 
+---
+*Các cấu hình biên dịch chi tiết (Compiler flags, đường dẫn thư viện...) đã được thiết lập sẵn trong file `Makefile`. Vui lòng xem mã nguồn dự án để biết thêm chi tiết.*
