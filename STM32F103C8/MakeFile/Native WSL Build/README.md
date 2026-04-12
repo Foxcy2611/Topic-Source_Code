@@ -15,6 +15,7 @@ In this project, we developed using the following environments, separate from ty
 
 ## Project Diagram
 
+```text
 Native WSL Build/
 │
 ├── Makefile                  # Project Manager
@@ -43,7 +44,14 @@ Native WSL Build/
 │   └── STM32F103.svd         # - File for checking registers during debugging.
 │
 └── build/                    # [OUTPUT] - The .hex and .bin files are located here.
+```
 
 ## Setup for Work
 
 ### 1. Install WSL on Window
+
+`` bash
+wsl --install
+wsl --install -d Ubuntu
+
+### 2. a
