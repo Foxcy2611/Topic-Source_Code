@@ -2,45 +2,48 @@
 
 ![C](https://img.shields.io/badge/Language-C-blue.svg)
 ![MCU](https://img.shields.io/badge/MCU-STM32F103-brightgreen.svg)
-![Build](https://img.shields.io/badge/Build-Makefile%20%7C%20WSL-orange.svg)
 
-> Dự án mô phỏng đồng hồ cát vật lý trên 2 khối LED ma trận 8x8. Sử dụng cảm biến gia tốc MPU6050 để tính toán góc nghiêng của bo mạch, từ đó điều khiển hướng rơi và tốc độ chảy của các "hạt cát" LED bằng thuật toán mô phỏng vật lý chân thực.
+> A physical hourglass simulation project on two 8x8 LED matrices. It uses an MPU6050 accelerometer to calculate the board's tilt angle, thereby controlling the falling direction and flow rate of the LED "sand grains" using a realistic physical simulation algorithm.
 
-## 🌟 Tính năng chính
+## 🌟 Key Features
 
-- **Mô phỏng trọng lực:** Đọc dữ liệu thô (raw data) từ trục X, Y, Z của MPU6050 qua I2C để xác định góc nghiêng.
-- **Thuật toán "cát rơi":** Xử lý ma trận điểm ảnh để các hạt LED tự do lấp đầy khoảng trống bên dưới, trượt qua nhau khi có vật cản.
-- **Giao diện LED mượt mà:** Quét 2 màn hình LED Matrix 8x8 tốc độ cao, không giật lag.
-- **Môi trường phát triển độc lập:** Không phụ thuộc IDE, build hoàn toàn bằng `Makefile` trên môi trường WSL (Ubuntu).
+- **Gravity Simulation:** Reads raw data from the X, Y, and Z axes of the MPU6050 via I2C to determine the tilt angle.
+- **"Falling Sand" Algorithm:** Processes the pixel matrix to allow LED grains to freely fill the empty spaces below and slide past each other when encountering obstacles.
+- **Smooth LED Interface:** Scans the two 8x8 LED Matrices at high speed without lagging.
+- **Development Environment:** The project is developed using the Keil C IDE.
 
-## 🛠 Phần cứng sử dụng
+## 🛠 Hardware Used
 
-- Vi điều khiển: **STM32F103C8T6** (Blue Pill)
-- Cảm biến: **MPU6050** (Gia tốc kế 3 trục & Con quay hồi chuyển)
-- Hiển thị: **2 x LED Matrix 8x8** (Sử dụng IC MAX7219)
-- Debug/Nạp code: **ST-Link v2**
+- Microcontroller: **STM32F103C8T6** (Blue Pill)
+- Sensor: **MPU6050** (3-axis Accelerometer & Gyroscope)
+- Display: **2 x 8x8 LED Matrix** (Using MAX7219 IC)
+- Debug/Programmer: **ST-Link v2**
 
-## 📂 Cấu trúc dự án
+## 📂 Project Structure
 
-Dự án được tổ chức theo chuẩn thư viện SPL (Standard Peripheral Library), biên dịch Native trên WSL:
+The project is organized using the SPL (Standard Peripheral Library):
 
 ```text
-Native WSL Build/
+Hourglass/
 |
-├── Makefile                  # Trình quản lý biên dịch
+├── main.c                    # Main entry point
 |
-├── app/                      # [Lớp ứng dụng]
-|   ├── inc/                  # - hourglass_logic.h, led_matrix.h, mpu6050.h
-|   └── src/                  # - main.c, hourglass_logic.c, led_matrix.c, mpu6050.c
+├── DELAY/
+|   ├── delay.c               # Delay library written using the Timer peripheral
+|   └── delay.h
 |
-├── drivers/                  # [Lớp điều khiển hệ thống & Ngoại vi]
-|   ├── inc/                  # - stm32f10x_conf.h, stm32f10x_it.h
-|   └── src/                  # - stm32f10x_it.c (Xử lý ngắt), system_stm32f10x.c
+├── MAX7219/                  # Custom library to control the LED matrix
+|   ├── max7219.c
+|   └── max7219.h
 |
-├── lib/                      # [Thư viện gốc của VENDOR]
-|   ├── cmsis/                # - Lõi ARM (core_cm3.h, stm32f10x.h)
-|   └── spl/                  # - Thư viện chuẩn ngoại vi (GPIO, I2C, SPI...)
+├── MPU6050/                  # Custom library to fetch rotation axis values
+|   ├── Mpu6050.c
+|   └── mpu6050.h
 |
-└── system/                   # [Lớp Startup & Linker]
-    ├── startup.s             # - File Assembly khởi động
-    └── stm32_f103c8.ld       # - Linker Script phân bổ bộ nhớ
+├── UART/                     # Library for debugging, printing rotation angle values
+|   ├── uart.c
+|   └── uart.h
+|
+└── CONTROL/                  # The brain of the project, falling sand processing algorithm
+    ├── control_matrix.c
+    └── control_matrix.h
