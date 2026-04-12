@@ -50,10 +50,10 @@ Native WSL Build/
 
 ### 1. Install WSL on Window
 
-`` bash
+``` bash
 wsl --install
 wsl --install -d Ubuntu
-``
+```
 
 ### 2. Setup WSL on VSC
 * Install extension WSL
@@ -62,49 +62,55 @@ wsl --install -d Ubuntu
 
 ### 3. Install Toolchain 
 This toolkit includes a C/C++ compiler for ARM bare-metal, tools for inspecting .bin and .elf files, and debugging tools.
-`` bash
+
+``` bash
 sudo apt install gcc-arm-none-eabi binutils-arm-none-eabi gdb-multiarch make -y
-``
+```
+
 ### 4. Setting up a USB (ST-Link) connection over a virtual network (USB/IP)
 Open PowerShell (Run as Administrator), install usbipd
-`` bash
+
+``` bash
 winget install --interactive --exact dorssel.usbipd-win
-``
+```
 (Restart your computer if this is the first time installing.)
 
 Setup on Windows
 * Install the USB control toolkit.
-`` bash
+  
+``` bash
 sudo apt update
 sudo apt install usbutils -y
-``
+```
 
 * Install drivers and overclock using the usbipd command.
-`` bash
+  
+``` bash
 sudo apt install linux-tools-generic hwdata -y
 sudo update-alternatives --install /usr/local/bin/usbip usbip /usr/lib/linux-tools/*-generic/usbip 20
 sudo apt install libusb-1.0-0-dev -y
-``
+```
   
 * Install the Loading and Debugging Toolkit (ST-Link).
-`` bash
+  
+``` bash
 sudo apt install stlink-tools openocd -y
-``
+```
 
 * Grant permission for ST-Link to be used at WSL.
 Once you successfully grant permission, standard IDEs (Keil C, etc.) will no longer be able to detect the St-Link connection signal.
-`` bash
+
+``` bash
 usbipd list
 usbipd bind --busid <busid>
 usbipd attach --wsl --busid <busid>
-``
+```
 
 Check by
-`` bash
+
+``` bash
 st-info --probe
-``
+```
 
 ## The rest has been edited; see the project for more details.
-
-
 
